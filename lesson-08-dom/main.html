@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 8 — Работа с DOM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .demo-box {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 8: Работа с DOM</h1>
+    
+    <div class="info">
+        <p><strong>Цель урока:</strong> Научиться взаимодействовать с элементами веб-страницы из JavaScript.</p>
+        <p><strong>Что делать:</strong> Откройте файл <code>script.js</code> и выполните все задания.</p>
+        <p><strong>Проверка:</strong> Откройте консоль браузера (F12), чтобы увидеть результаты выполнения.</p>
+    </div>
+
+    <h2>Теория</h2>
+    <ul>
+        <li><strong>DOM</strong> — объектная модель документа, представление страницы в виде дерева элементов</li>
+        <li><strong>Получение элементов:</strong> <code>getElementById()</code>, <code>querySelector()</code>, <code>getElementsByClassName()</code></li>
+        <li><strong>Изменение контента:</strong> <code>textContent</code>, <code>innerHTML</code></li>
+        <li><strong>Изменение стилей:</strong> <code>style</code>, <code>classList</code></li>
+        <li><strong>Создание элементов:</strong> <code>createElement()</code>, <code>appendChild()</code></li>
+    </ul>
+
+    <h2>Задания</h2>
+    <ol>
+        <li>Получение элементов разными способами</li>
+        <li>Изменение текста и стилей</li>
+        <li>Создание и добавление новых элементов</li>
+        <li>Удаление элементов</li>
+    </ol>
+
+    <div class="demo-box">
+        <h3>Демонстрационная область</h3>
+        <p id="text1">Это параграф с id="text1"</p>
+        <p class="text-class">Это параграф с классом "text-class"</p>
+        <div id="container">
+            <p>Элемент внутри контейнера</p>
+        </div>
+        <button id="demo-btn">Демо кнопка</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
