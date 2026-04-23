@@ -1,0 +1,17 @@
+{
+    "name": "Урок 4: Доступ к функциям устройства",
+    "short_name": "Device Урок",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#6f42c1",
+    "description": "Обучающее приложение по работе с функциями устройства для студентов техникума",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

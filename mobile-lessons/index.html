@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 4 — Доступ к функциям устройства</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .demo-box {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px 5px;
+            font-size: 16px;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5a32a3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        .camera-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: #000;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        img.preview {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 4: Доступ к функциям устройства</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Научиться использовать встроенные функции мобильных устройств: камеру, геолокацию, уведомления.</p>
+        <p><strong>Что делать:</strong> Изучите теорию, выполните задания и протестируйте функции на мобильном устройстве.</p>
+    </div>
+
+    <h2>Теория</h2>
+
+    <h3>Доступ к функциям устройства через браузер</h3>
+    <p>Современные браузеры предоставляют доступ к функциям устройства через Web APIs:</p>
+    <ul>
+        <li><strong>Камера и микрофон</strong> — MediaDevices API</li>
+        <li><strong>Геолокация</strong> — Geolocation API</li>
+        <li><strong>Уведомления</strong> — Notifications API</li>
+        <li><strong>Акцелерометр</strong> — DeviceOrientation API</li>
+    </ul>
+
+    <h3>Geolocation API (геолокация)</h3>
+    <p>Получение текущего местоположения пользователя:</p>
+
+    <pre><code>// Получить текущее местоположение
+navigator.geolocation.getCurrentPosition(
+    function(position) {
+        // Успех
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        console.log(`Широта: ${lat}, Долгота: ${lng}`);
+    },
+    function(error) {
+        // Ошибка
+        console.error('Ошибка геолокации:', error.message);
+    }
+);
+
+// Отслеживать изменения местоположения
+const watchId = navigator.geolocation.watchPosition(successCallback, errorCallback);
+
+// Остановить отслеживание
+navigator.geolocation.clearWatch(watchId);</code></pre>
+
+    <h3>MediaDevices API (камера)</h3>
+    <p>Доступ к камере и микрофону:</p>
+
+    <pre><code>// Получить доступ к камере
+navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(function(stream) {
+        // Успех - получили видеопоток
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+    })
+    .catch(function(error) {
+        // Ошибка
+        console.error('Ошибка камеры:', error.message);
+    });</code></pre>
+
+    <h3>Notifications API (уведомления)</h3>
+    <p>Показ системных уведомлений:</p>
+
+    <pre><code>// Проверить разрешение
+if (Notification.permission === 'granted') {
+    // Показать уведомление
+    new Notification('Заголовок', {
+        body: 'Текст уведомления',
+        icon: 'icon.png'
+    });
+} else if (Notification.permission !== 'denied') {
+    // Запросить разрешение
+    Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+            new Notification('Уведомление разрешено!');
+        }
+    });
+}</code></pre>
+
+    <h3>Важные моменты</h3>
+    <ul>
+        <li>Все эти API работают <strong>только по HTTPS</strong> (или localhost для разработки)</li>
+        <li>Требуется <strong>разрешение пользователя</strong></li>
+        <li>На мобильных устройствах некоторые функции могут быть ограничены</li>
+        <li>Всегда обрабатывайте ошибки и отказы пользователя</li>
+    </ul>
+
+    <h2>Задания</h2>
+
+    <div class="demo-box">
+        <h3>Демонстрация функций устройства</h3>
+
+        <h4>📍 Геолокация</h4>
+        <button onclick="getLocation()">Получить местоположение</button>
+        <div id="location-result" class="result">Нажмите кнопку выше</div>
+
+        <h4>📸 Камера</h4>
+        <button onclick="openCamera()" id="camera-btn">Открыть камеру</button>
+        <div id="camera-container">
+            <div class="camera-preview" id="camera-preview">
+                Камера будет здесь
+            </div>
+        </div>
+
+        <h4>🔔 Уведомления</h4>
+        <button onclick="requestNotification()">Запросить разрешение на уведомления</button>
+        <button onclick="showNotification()" id="notify-btn" disabled>Показать уведомление</button>
+        <div id="notification-result" class="result">Статус уведомлений: не запрошено</div>
+    </div>
+
+    <ol>
+        <li>
+            <strong>Создайте карту с маркером:</strong>
+            <ul>
+                <li>Получите геолокацию пользователя</li>
+                <li>Покажите координаты на странице</li>
+                <li>Создайте ссылку на Google Maps с этими координатами</li>
+                <li>Добавьте кнопку "Обновить местоположение"</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Улучшите камеру:</strong>
+            <ul>
+                <li>Добавьте возможность сделать фото</li>
+                <li>Покажите превью сделанного фото</li>
+                <li>Добавьте кнопку "Сохранить фото" (сохраняет в localStorage)</li>
+                <li>Покажите галерею сохранённых фото</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте напоминалку:</strong>
+            <ul>
+                <li>Пользователь вводит текст и время</li>
+                <li>В указанное время показывается уведомление</li>
+                <li>Используйте setTimeout для таймера</li>
+                <li>Добавьте возможность отменить напоминание</li>
+            </ul>
+        </li>
+    </ol>
+
+    <script>
+        // Геолокация
+        function getLocation() {
+            const resultDiv = document.getElementById('location-result');
+
+            if (!navigator.geolocation) {
+                resultDiv.innerHTML = 'Геолокация не поддерживается в этом браузере';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Запрашиваем местоположение...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    resultDiv.innerHTML = `
+                        <strong>Ваше местоположение:</strong><br>
+                        Широта: ${lat.toFixed(6)}<br>
+                        Долгота: ${lng.toFixed(6)}<br>
+                        Точность: ${accuracy} метров<br>
+                        <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
+                            Открыть в Google Maps
+                        </a>
+                    `;
+                },
+                function(error) {
+                    let message = 'Ошибка получения местоположения: ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message += 'Пользователь отказал в предоставлении геолокации';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message += 'Информация о местоположении недоступна';
+                            break;
+                        case error.TIMEOUT:
+                            message += 'Запрос местоположения истек';
+                            break;
+                        default:
+                            message += error.message;
+                            break;
+                    }
+                    resultDiv.innerHTML = message;
+                }
+            );
+        }
+
+        // Камера
+        let cameraStream = null;
+
+        function openCamera() {
+            const preview = document.getElementById('camera-preview');
+            const btn = document.getElementById('camera-btn');
+
+            if (cameraStream) {
+                // Остановить камеру
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+                preview.innerHTML = 'Камера закрыта';
+                btn.textContent = 'Открыть камеру';
+                return;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                preview.innerHTML = 'Камера не поддерживается';
+                return;
+            }
+
+            preview.innerHTML = 'Запрашиваем доступ к камере...';
+            btn.disabled = true;
+
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(function(stream) {
+                    cameraStream = stream;
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.style.width = '100%';
+                    video.style.maxWidth = '300px';
+                    video.style.borderRadius = '5px';
+                    video.play();
+                    preview.innerHTML = '';
+                    preview.appendChild(video);
+                    btn.textContent = 'Закрыть камеру';
+                    btn.disabled = false;
+                })
+                .catch(function(error) {
+                    preview.innerHTML = `Ошибка камеры: ${error.message}`;
+                    btn.disabled = false;
+                });
+        }
+
+        // Уведомления
+        function requestNotification() {
+            const resultDiv = document.getElementById('notification-result');
+            const notifyBtn = document.getElementById('notify-btn');
+
+            if (!('Notification' in window)) {
+                resultDiv.innerHTML = 'Уведомления не поддерживаются в этом браузере';
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                resultDiv.innerHTML = 'Разрешение на уведомления уже получено';
+                notifyBtn.disabled = false;
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        resultDiv.innerHTML = 'Разрешение на уведомления получено!';
+                        notifyBtn.disabled = false;
+                    } else {
+                        resultPressed.innerHTML = 'Разрешение на уведомления отклонено';
+                    }
+                });
+            } else {
+                resultDiv.innerHTML = 'Разрешение на уведомления было ранее отклонено';
+            }
+        }
+
+        function showNotification() {
+            if (Notification.permission === 'granted') {
+                new Notification('Тестовое уведомление', {
+                    body: 'Это демонстрационное уведомление из PWA!',
+                    icon: 'icon-192.png'
+                });
+            }
+        }
+    </script>
+</body>
+</html>
