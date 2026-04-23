@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 2.1 — Работа с локальным хранилищем</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .demo-box {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #138496;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .notes-list {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .note-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            background: #dc3545;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 3: Работа с локальным хранилищем</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Научиться сохранять данные в браузере с помощью localStorage и создавать приложение, которое работает без интернета.</p>
+        <p><strong>Что делать:</strong> Изучите теорию, выполните задания и протестируйте сохранение данных.</p>
+    </div>
+
+    <h2>Теория</h2>
+
+    <h3>Что такое localStorage?</h3>
+    <p><strong>localStorage</strong> — это встроенное хранилище в браузере, которое позволяет сохранять данные даже после закрытия браузера.</p>
+
+    <p><strong>Особенности localStorage:</strong></p>
+    <ul>
+        <li>Данные сохраняются <strong>навсегда</strong> (пока пользователь не очистит их)</li>
+        <li>Хранит только <strong>строки</strong> (для объектов используйте JSON)</li>
+        <li>Ограничение: ~5-10 МБ на сайт</li>
+        <li>Работает <strong>без интернета</strong></li>
+        <li>Доступен только для текущего домена</li>
+    </ul>
+
+    <h3>Основные методы localStorage</h3>
+
+    <pre><code>// Сохранить данные
+localStorage.setItem('ключ', 'значение');
+
+// Получить данные
+localStorage.getItem('ключ');
+
+// Удалить данные
+localStorage.removeItem('ключ');
+
+// Очистить всё хранилище
+localStorage.clear();
+
+// Проверить существование ключа
+if (localStorage.getItem('ключ') !== null) {
+    // данные существуют
+}</code></pre>
+
+    <h3>Работа с объектами и массивами</h3>
+    <p>Поскольку localStorage хранит только строки, для объектов используйте JSON:</p>
+
+    <pre><code>// Сохранение объекта
+const user = { name: "Иван", age: 25 };
+localStorage.setItem('user', JSON.stringify(user));
+
+// Получение объекта
+const savedUser = JSON.parse(localStorage.getItem('user'));
+
+// Сохранение массива
+const notes = ["Заметка 1", "Заметка 2"];
+localStorage.setItem('notes', JSON.stringify(notes));
+
+// Получение массива
+const savedNotes = JSON.parse(localStorage.getItem('notes'));</code></pre>
+
+    <h3>Обработка ошибок</h3>
+    <p>Всегда проверяйте, поддерживается ли localStorage:</p>
+
+    <pre><code>function supportsLocalStorage() {
+    try {
+        return 'localStorage' in window && window.localStorage !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
+if (supportsLocalStorage()) {
+    // можно использовать localStorage
+}</code></pre>
+
+    <h2>Задания</h2>
+
+    <div class="demo-box">
+        <h3>Демонстрация: Блокнот с сохранением</h3>
+
+        <div>
+            <label for="note-input">📝 Новая заметка:</label>
+            <textarea id="note-input" placeholder="Введите текст заметки..." rows="3"></textarea>
+            <button onclick="addNote()">Добавить заметку</button>
+            <button onclick="clearAllNotes()">Очистить всё</button>
+        </div>
+
+        <div id="notes-container" class="notes-list">
+            <h4>Сохранённые заметки:</h4>
+            <div id="notes-list"></div>
+        </div>
+    </div>
+
+    <ol>
+        <li>
+            <strong>Создайте простое хранилище настроек:</strong>
+            <ul>
+                <li>Создайте форму с полями: Имя, Возраст, Любимый цвет</li>
+                <li>При изменении любого поля сохраняйте его в localStorage</li>
+                <li>При загрузке страницы восстанавливайте значения из localStorage</li>
+                <li>Добавьте кнопку "Сбросить настройки"</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Улучшите блокнот:</strong>
+            <ul>
+                <li>Добавьте дату и время создания заметки</li>
+                <li>Сортируйте заметки по дате (новые сверху)</li>
+                <li>Добавьте возможность редактирования заметки</li>
+                <li>Показывайте количество сохранённых заметок</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте счётчик посещений:</strong>
+            <ul>
+                <li>При каждом открытии страницы увеличивайте счётчик</li>
+                <li>Сохраняйте счётчик в localStorage</li>
+                <li>Показывайте сообщение: "Вы посетили эту страницу X раз"</li>
+                <li>Добавьте кнопку "Сбросить счётчик"</li>
+            </ul>
+        </li>
+    </ol>
+
+    <script>
+        // Загрузка заметок при старте
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotes();
+        });
+
+        function addNote() {
+            const noteInput = document.getElementById('note-input');
+            const noteText = noteInput.value.trim();
+
+            if (noteText === '') {
+                alert('Введите текст заметки!');
+                return;
+            }
+
+            // Получаем существующие заметки
+            let notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+            // Добавляем новую заметку
+            notes.push({
+                text: noteText,
+                timestamp: new Date().toISOString()
+            });
+
+            // Сохраняем обратно
+            localStorage.setItem('notes', JSON.stringify(notes));
+
+            // Очищаем поле ввода
+            noteInput.value = '';
+
+            // Обновляем отображение
+            loadNotes();
+        }
+
+        function loadNotes() {
+            const notesList = document.getElementById('notes-list');
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+            if (notes.length === 0) {
+                notesList.innerHTML = '<p>Нет сохранённых заметок</p>';
+                return;
+            }
+
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note-item';
+                const date = new Date(note.timestamp);
+                noteElement.innerHTML = `
+                    <div>
+                        <strong>${date.toLocaleDateString()}</strong> ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}<br>
+                        ${note.text}
+                    </div>
+                    <button class="delete-btn" onclick="deleteNote(${index})">Удалить</button>
+                `;
+                notesList.appendChild(noteElement);
+            });
+        }
+
+        function deleteNote(index) {
+            let notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.splice(index, 1);
+            localStorage.setItem('notes', JSON.stringify(notes));
+            loadNotes();
+        }
+
+        function clearAllNotes() {
+            if (confirm('Удалить все заметки?')) {
+                localStorage.removeItem('notes');
+                loadNotes();
+            }
+        }
+    </script>
+</body>
+</html>

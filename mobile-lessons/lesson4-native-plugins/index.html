@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 4 — Работа с нативными плагинами</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .step {
+            background: #e8f5e9;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 0 5px 5px 0;
+        }
+        .success {
+            background: #d1ecf1;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+            border-radius: 0 5px 5px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .demo-area {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+            text-align: center;
+        }
+        img.preview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 4: Работа с нативными плагинами</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Научиться подключать и использовать нативные функции телефона (камера, геолокация) через плагины Cordova.</p>
+        <p><strong>Требования:</strong> У вас должен быть готовый проект Cordova из Урока 3.</p>
+    </div>
+
+    <h2>Что такое плагины в Cordova?</h2>
+    <p><strong>Плагин</strong> — это расширение, которое даёт вашему HTML/JS-приложению доступ к нативным функциям телефона:</p>
+    <ul>
+        <li>Камера</li>
+        <li>Геолокация</li>
+        <li>Файловая система</li>
+        <li>Контакты</li>
+        <li>Аккумулятор</li>
+        <li>И многое другое!</li>
+    </ul>
+
+    <p>Без плагинов ваше приложение — просто веб-страница. С плагинами — полноценное мобильное приложение!</p>
+
+    <div class="warning">
+        <strong>⚠️ Важно:</strong> Плагины работают <strong>только в собранном приложении</strong> (APK или через <code>cordova run android</code>). В браузере они <strong>не работают</strong>!
+    </div>
+
+    <h2>Пошаговая инструкция</h2>
+
+    <div class="step">
+        <h3>Шаг 1: Подготовка проекта</h3>
+        <p>Убедитесь, что у вас есть рабочий проект Cordova из Урока 3.</p>
+
+        <p>Если нет — создайте новый:</p>
+        <pre><code>cordova create mycamera com.example.mycamera MyCamera
+cd mycamera
+cordova platform add android</code></pre>
+
+        <p>Все дальнейшие команды выполняйте внутри папки проекта!</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 2: Установка плагина камеры</h3>
+        <p>Официальный плагин камеры от Apache называется <code>cordova-plugin-camera</code>.</p>
+
+        <pre><code># Установка плагина камеры
+cordova plugin add cordova-plugin-camera</code></pre>
+
+        <p>Эта команда:</p>
+        <ul>
+            <li>Скачивает плагин из репозитория</li>
+            <li>Добавляет его в ваш проект</li>
+            <li>Настраивает разрешения в Android/iOS</li>
+        </ul>
+
+        <p>Проверить установленные плагины можно командой:</p>
+        <pre><code>cordova plugin list</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 3: Использование камеры в коде</h3>
+        <p>Теперь вы можете использовать камеру в файле <code>www/js/index.js</code> или прямо в <code>www/index.html</code>.</p>
+
+        <p>Основная функция: <code>navigator.camera.getPicture()</code></p>
+
+        <pre><code>// Функция для запуска камеры
+function takePicture() {
+    navigator.camera.getPicture(onSuccess, onError, {
+        quality: 50,
+        destinationType: Camera.DestinationType.DATA_URL
+    });
+}
+
+// Обработка успешного результата
+function onSuccess(imageData) {
+    var image = document.getElementById('myImage');
+    image.src = "data:image/jpeg;base64," + imageData;
+    image.style.display = "block";
+}
+
+// Обработка ошибки
+function onError(message) {
+    alert('Ошибка: ' + message);
+}</code></pre>
+
+        <p><strong>Параметры функции:</strong></p>
+        <ul>
+            <li><code>quality</code> — качество изображения (1-100)</li>
+            <li><code>destinationType</code> — формат результата:
+                <ul>
+                    <li><code>DATA_URL</code> — base64 строка (для отображения на странице)</li>
+                    <li><code>FILE_URI</code> — путь к файлу (для сохранения)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 4: Добавление кнопки в HTML</h3>
+        <p>Откройте файл <code>www/index.html</code> и добавьте следующий код в тело страницы:</p>
+
+        <pre><code>&lt;div class="demo-area"&gt;
+    &lt;h2&gt;📸 Камера&lt;/h2&gt;
+    &lt;button onclick="takePicture()"&gt;Сделать фото&lt;/button&gt;
+    &lt;img id="myImage" class="preview" /&gt;
+&lt;/div&gt;</code></pre>
+
+        <p>Не забудьте добавить функции <code>takePicture()</code>, <code>onSuccess()</code>, <code>onError()</code> в тег <code>&lt;script&gt;</code> или в отдельный JS-файл.</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 5: Тестирование на устройстве</h3>
+        <p>Плагины <strong>не работают в браузере</strong>! Нужно собрать приложение.</p>
+
+        <p><strong>Вариант 1: Запуск через USB (рекомендуется)</strong></p>
+        <pre><code># Подключите телефон к компьютеру
+# Включите "Режим разработчика" и "Отладку по USB" на телефоне
+cordova run android</code></pre>
+
+        <p><strong>Вариант 2: Сборка APK-файла</strong></p>
+        <pre><code># Собрать APK-файл
+cordova build android
+
+# APK будет здесь:
+# platforms/android/app/build/outputs/apk/debug/app-debug.apk</code></pre>
+
+        <p>Установите APK-файл на телефон и протестируйте!</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 6: Плагин геолокации</h3>
+        <p>Точно так же устанавливается плагин геолокации:</p>
+
+        <pre><code># Установка плагина геолокации
+cordova plugin add cordova-plugin-geolocation</code></pre>
+
+        <p>Использование в коде:</p>
+        <pre><code>function getLocation() {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            alert('Широта: ' + position.coords.latitude +
+                  '\nДолгота: ' + position.coords.longitude);
+        },
+        function(error) {
+            alert('Ошибка геолокации: ' + error.message);
+        }
+    );
+}</code></pre>
+    </div>
+
+    <h2>Структура проекта с плагинами</h2>
+
+    <pre><code>mycamera/
+├── config.xml
+├── www/
+│   ├── index.html
+│   └── js/
+│       └── index.js
+├── plugins/                 # ← Здесь хранятся все плагины
+│   ├── cordova-plugin-camera/
+│   └── cordova-plugin-geolocation/
+└── platforms/               # ← Платформы с подключенными плагинами</code></pre>
+
+    <div class="success">
+        <strong>✅ Запомните:</strong> После установки плагина не нужно ничего копировать вручную — Cordova всё настроит автоматически!
+    </div>
+
+    <h2>Задания для практики</h2>
+
+    <ol>
+        <li>
+            <strong>Установите плагин камеры:</strong>
+            <ul>
+                <li>В своём проекте из Урока 3 выполните <code>cordova plugin add cordova-plugin-camera</code></li>
+                <li>Проверьте установку командой <code>cordova plugin list</code></li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте приложение "Фотоаппарат":</strong>
+            <ul>
+                <li>Добавьте кнопку "Сделать фото"</li>
+                <li>При нажатии открывается камера</li>
+                <li>Сделанное фото отображается на странице</li>
+                <li>Протестируйте на реальном устройстве</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Добавьте геолокацию:</strong>
+            <ul>
+                <li>Установите плагин <code>cordova-plugin-geolocation</code></li>
+                <li>Добавьте кнопку "Показать моё местоположение"</li>
+                <li>При нажатии показывайте координаты в alert</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Комбинированное приложение:</strong>
+            <ul>
+                <li>Создайте приложение, которое делает фото И определяет местоположение</li>
+                <li>Отображайте фото и координаты на одной странице</li>
+                <li>Подпишите фото: "Снято в [широта], [долгота]"</li>
+            </ul>
+        </li>
+    </ol>
+
+    <div class="warning">
+        <h3>Частые проблемы и решения</h3>
+
+        <p><strong>Проблема:</strong> Камера не открывается, ошибка "plugin_not_installed"</p>
+        <p><strong>Решение:</strong> Убедитесь, что вы тестируете на устройстве, а не в браузере.</p>
+
+        <p><strong>Проблема:</strong> Приложение вылетает при запуске камеры</p>
+        <p><strong>Решение:</strong> Проверьте, включены ли разрешения на камеру в настройках телефона.</p>
+
+        <p><strong>Проблема:</strong> Геолокация не работает</p>
+        <p><strong>Решение:</strong> Убедитесь, что GPS включён на устройстве и разрешения предоставлены.</p>
+
+        <p><strong>Проблема:</strong> Долгая сборка APK</p>
+        <p><strong>Решение:</strong> Используйте <code>cordova run android</code> с подключённым устройством — быстрее и удобнее.</p>
+    </div>
+
+    <h2>Что дальше?</h2>
+    <p>После этого урока вы сможете:</p>
+    <ul>
+        <li>Устанавливать любые плагины Cordova</li>
+        <li>Использовать камеру и геолокацию в своих приложениях</li>
+        <li>Тестировать приложения на реальных устройствах</li>
+        <li>Создавать полнофункциональные мобильные приложения</li>
+    </ul>
+
+    <div class="demo-area">
+        <h3>Демонстрация (только для PWA-версии)</h3>
+        <p>Эта демонстрация работает только в браузере.<br>
+        В настоящем Cordova-приложении будет настоящая камера!</p>
+        <button onclick="alert('В Cordova-приложении здесь откроется камера!')">
+            Сделать фото (Cordova)
+        </button>
+        <button onclick="getLocationDemo()">
+            Показать местоположение (PWA)
+        </button>
+        <img id="demoImage" class="preview" src="" alt="Фото"/>
+    </div>
+
+    <script>
+        // Демонстрация для PWA (не настоящая камера)
+        function getLocationDemo() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        alert('Широта: ' + position.coords.latitude +
+                              '\nДолгота: ' + position.coords.longitude);
+                    },
+                    function(error) {
+                        alert('Ошибка: ' + error.message +
+                              '\n\nВ настоящем Cordova-приложении геолокация работает надёжнее!');
+                    }
+                );
+            } else {
+                alert('Геолокация не поддерживается в этом браузере');
+            }
+        }
+    </script>
+</body>
+</html>

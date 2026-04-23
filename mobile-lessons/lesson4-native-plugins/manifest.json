@@ -1,0 +1,17 @@
+{
+    "name": "Урок 4: Работа с нативными плагинами",
+    "short_name": "Plugins Урок",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4CAF50",
+    "description": "Обучающее приложение по работе с плагинами Cordova для студентов техникума",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
