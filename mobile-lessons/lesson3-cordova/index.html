@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 3 — Первый проект на Apache Cordova</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .step {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 0 5px 5px 0;
+        }
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 0 5px 5px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 3: Первый проект на Apache Cordova</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Установить Apache Cordova и создать своё первое мобильное приложение.</p>
+        <p><strong>Важно:</strong> Этот урок требует работы на компьютере с установленным Node.js. На телефоне только просмотреть нельзя!</p>
+    </div>
+
+    <h2>Что такое Apache Cordova?</h2>
+    <p><strong>Apache Cordova</strong> — это фреймворк, который позволяет создавать мобильные приложения с помощью HTML, CSS и JavaScript.</p>
+
+    <p><strong>Как это работает:</strong></p>
+    <ul>
+        <li>Вы пишете обычный веб-сайт (HTML/CSS/JS)</li>
+        <li>Cordova "оборачивает" его в нативную оболочку</li>
+        <li>Получается APK-файл для Android или IPA-файл для iOS</li>
+        <li>Приложение имеет доступ к функциям телефона: камера, геолокация, файлы и т.д.</li>
+    </ul>
+
+    <div class="warning">
+        <strong>⚠️ Важно:</strong> Для работы Cordova нужен компьютер с Windows, Linux или Mac. На телефоне установить Cordova нельзя!
+    </div>
+
+    <h2>Пошаговая инструкция</h2>
+
+    <div class="step">
+        <h3>Шаг 1: Установка Node.js</h3>
+        <p>Node.js нужен для установки Cordova через командную строку.</p>
+
+        <ol>
+            <li>Перейдите на официальный сайт: <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
+            <li>Скачайте версию <strong>LTS</strong> (Long Term Support) для вашей операционной системы</li>
+            <li>Установите скачанный файл (просто следуйте инструкциям установщика)</li>
+            <li>После установки откройте командную строку и проверьте:</li>
+        </ol>
+
+        <pre><code># Проверка установки Node.js
+node --version
+
+# Проверка установки npm (менеджер пакетов)
+npm --version</code></pre>
+
+        <p>Если вы видите номера версий (например, v18.17.0), значит всё установлено правильно!</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 2: Установка Apache Cordova</h3>
+        <p>Теперь устанавливаем сам Cordova через npm (менеджер пакетов Node.js).</p>
+
+        <pre><code># Установка Cordova глобально
+npm install -g cordova</code></pre>
+
+        <p><strong>Что означают флаги:</strong></p>
+        <ul>
+            <li><code>npm</code> — менеджер пакетов Node.js</li>
+            <li><code>install</code> — команда установки</li>
+            <li><code>-g</code> — установить глобально (доступно отовсюду)</li>
+            <li><code>cordova</code> — название пакета</li>
+        </ul>
+
+        <p>Дождитесь окончания установки (может занять 1-5 минут).</p>
+
+        <p>Проверьте установку:</p>
+        <pre><code>cordova --version</code></pre>
+
+        <p>Если вы видите номер версии (например, 12.0.0), значит Cordova установлен успешно!</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 3: Создание первого проекта</h3>
+        <p>Теперь создадим наш первый проект Cordova.</p>
+
+        <pre><code># Создание нового проекта
+cordova create myapp com.example.myapp MyApp</code></pre>
+
+        <p><strong>Разберём параметры команды:</strong></p>
+        <ul>
+            <li><code>myapp</code> — имя папки проекта (можно изменить)</li>
+            <li><code>com.example.myapp</code> — уникальный идентификатор приложения (package name)</li>
+            <li><code>MyApp</code> — отображаемое название приложения</li>
+        </ul>
+
+        <p>После выполнения команды появится папка <code>myapp</code> с готовым проектом.</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 4: Изучение структуры проекта</h3>
+        <p>Зайдите в папку проекта и изучите её содержимое:</p>
+
+        <pre><code>cd myapp
+ls -la</code></pre>
+
+        <p><strong>Основные файлы и папки:</strong></p>
+        <ul>
+            <li><code>config.xml</code> — конфигурационный файл приложения (название, иконки, разрешения)</li>
+            <li><code>www/</code> — основная папка с вашим кодом (HTML, CSS, JS)</li>
+            <li><code>platforms/</code> — папка для платформ (Android, iOS) — создаётся автоматически</li>
+            <li><code>plugins/</code> — папка для плагинов — создаётся автоматически</li>
+        </ul>
+
+        <p><strong>Ваш код находится в папке <code>www/</code>!</strong> Именно здесь вы будете работать.</p>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 5: Добавление платформы</h3>
+        <p>Чтобы собрать приложение для Android, нужно добавить платформу:</p>
+
+        <pre><code># Добавление платформы Android
+cordova platform add android</code></pre>
+
+        <p>Эта команда скачает необходимые файлы для сборки Android-приложений.</p>
+
+        <div class="warning">
+            <strong>⚠️ Важно:</strong> Для полной сборки APK вам понадобится Android Studio, но для обучения мы будем использовать браузер!
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 6: Запуск в браузере (для обучения)</h3>
+        <p>Пока не устанавливая Android Studio, мы можем тестировать наше приложение в браузере:</p>
+
+        <pre><code># Запуск в браузере
+cordova run browser</code></pre>
+
+        <p>Откроется браузер с вашим приложением! Это очень удобно для обучения.</p>
+
+        <p><strong>Преимущества браузерного запуска:</strong></p>
+        <ul>
+            <li>Не нужно устанавливать Android Studio (тяжелая программа)</li>
+            <li>Быстрая проверка кода</li>
+            <li>Можно сразу видеть результат</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 7: Изменение кода приложения</h3>
+        <p>Теперь давайте изменим наше приложение.</p>
+
+        <p>Откройте файл <code>www/index.html</code> в любом текстовом редакторе (Блокнот, VS Code и т.д.).</p>
+
+        <p>Найдите секцию <code>&lt;body&gt;</code> и замените содержимое на:</p>
+
+        <pre><code>&lt;body&gt;
+    &lt;div class="app"&gt;
+        &lt;h1&gt;Моё первое Cordova приложение!&lt;/h1&gt;
+        &lt;p&gt;Это работает на Cordova!&lt;/p&gt;
+        &lt;button onclick="alert('Привет из Cordova!')"&gt;Нажми меня&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/body&gt;</code></pre>
+
+        <p>Сохраните файл и обновите страницу в браузере. Вы увидите изменения!</p>
+    </div>
+
+    <h2>Структура вашего проекта Cordova</h2>
+
+    <pre><code>myapp/
+├── config.xml          # Конфигурация приложения
+├── www/                # Ваш код (главная папка!)
+│   ├── index.html      # Основной HTML-файл
+│   ├── css/            # Стили
+│   ├── js/             # JavaScript
+│   └── img/            # Изображения
+├── platforms/          # Платформы (создаётся автоматически)
+├── plugins/            # Плагины (создаётся автоматически)
+└── node_modules/       # Зависимости (создаётся автоматически)</code></pre>
+
+    <div class="success">
+        <strong>✅ Запомните главное:</strong> Все ваши изменения делайте только в папке <code>www/</code>!
+    </div>
+
+    <h2>Задания для практики</h2>
+
+    <ol>
+        <li>
+            <strong>Установите Cordova на свой компьютер:</strong>
+            <ul>
+                <li>Установите Node.js</li>
+                <li>Установите Cordova через npm</li>
+                <li>Проверьте установку командой <code>cordova --version</code></li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте первый проект:</strong>
+            <ul>
+                <li>Создайте проект с именем <code>myfirstapp</code></li>
+                <li>Добавьте платформу browser</li>
+                <li>Запустите приложение в браузере</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Измените приложение:</strong>
+            <ul>
+                <li>Измените заголовок на своё имя</li>
+                <li>Добавьте кнопку, которая показывает текущее время</li>
+                <li>Добавьте стили (CSS) для красивого оформления</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Эксперимент:</strong>
+            <ul>
+                <li>Попробуйте добавить платформу Android (<code>cordova platform add android</code>)</li>
+                <li>Даже если Android Studio не установлена, команда должна выполниться</li>
+                <li>Посмотрите, какие файлы появились в папке <code>platforms/</code></li>
+            </ul>
+        </li>
+    </ol>
+
+    <div class="warning">
+        <h3>Частые проблемы и решения</h3>
+
+        <p><strong>Проблема:</strong> Команда <code>cordova</code> не распознаётся</p>
+        <p><strong>Решение:</strong> Перезапустите командную строку после установки Node.js и Cordova.</p>
+
+        <p><strong>Проблема:</strong> Ошибка при установке Cordova</p>
+        <p><strong>Решение:</strong> Запустите командную строку от имени администратора (Windows) или используйте <code>sudo</code> (Mac/Linux).</p>
+
+        <p><strong>Проблема:</strong> Приложение не запускается в браузере</p>
+        <p><strong>Решение:</strong> Убедитесь, что вы находитесь в папке проекта и выполнили <code>cordova platform add browser</code>.</p>
+    </div>
+
+    <h2>Что дальше?</h2>
+    <p>После успешного завершения этого урока вы сможете:</p>
+    <ul>
+        <li>Создавать новые проекты Cordova</li>
+        <li>Редактировать код в папке <code>www/</code></li>
+        <li>Тестировать приложения в браузере</li>
+        <li>Подготовиться к работе с нативными функциями (камера, геолокация) в следующих уроках</li>
+    </ul>
+
+    <script>
+        // Простая демонстрация (не обязательно для Cordova, но для мотивации)
+        function showDeviceInfo() {
+            alert('Это демо-страница!\n\nНастоящий Cordova проект нужно запускать через командную строку.');
+        }
+    </script>
+</body>
+</html>
+

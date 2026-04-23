@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 2 — Адаптация под мобильные устройства</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .demo-box {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+        .mobile-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 200px;
+            min-height: 60px;
+        }
+        .mobile-btn:active {
+            background: #218838;
+            transform: scale(0.98);
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        .touch-area {
+            background: #e9ecef;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px dashed #6c757d;
+            cursor: pointer;
+        }
+
+        /* Адаптивные медиа-запросы */
+        @media (max-width: 768px) {
+            .mobile-btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 2: Адаптация под мобильные устройства</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Научиться адаптировать веб-приложения под сенсорные экраны и мобильные устройства.</p>
+        <p><strong>Что делать:</strong> Изучите теорию, выполните задания и протестируйте результаты на мобильном устройстве.</p>
+    </div>
+
+    <h2>Теория</h2>
+
+    <h3>Viewport Meta Tag</h3>
+    <p>Этот тег <strong>обязателен</strong> для всех мобильных приложений:</p>
+    <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+
+    <p><strong>Что он делает:</strong></p>
+    <ul>
+        <li>Устанавливает ширину области просмотра равной ширине устройства</li>
+        <li>Отключает начальное масштабирование</li>
+        <li>Предотвращает неправильное отображение на мобильных устройствах</li>
+    </ul>
+
+    <h3>Touch Events vs Mouse Events</h3>
+    <p>На сенсорных устройствах используются события касания, но для простых кликов достаточно использовать стандартное событие <code>click</code>.</p>
+
+    <p><strong>Важные правила для touch:</strong></p>
+    <ul>
+        <li><strong>Минимальный размер кликабельных элементов:</strong> 48x48 пикселей</li>
+        <li><strong>Достаточные отступы между элементами:</strong> минимум 8px</li>
+        <li><strong>Визуальная обратная связь:</strong> изменение цвета или размера при нажатии</li>
+    </ul>
+
+    <h3>Адаптивные формы</h3>
+    <p>Используйте правильные типы input для отображения нужной клавиатуры:</p>
+
+    <pre><code>&lt;!-- Email - показывает клавиатуру с @ --&gt;
+&lt;input type="email" placeholder="email@example.com"&gt;
+
+&lt;!-- Телефон - показывает цифровую клавиатуру --&gt;
+&lt;input type="tel" placeholder="+7 (999) 123-45-67"&gt;
+
+&lt;!-- Числа - показывает числовую клавиатуру --&gt;
+&lt;input type="number" placeholder="123"&gt;
+
+&lt;!-- Предотвращает zoom на iOS при фокусе --&gt;
+&lt;input style="font-size: 16px;"&gt;</code></pre>
+
+    <h3>Медиа-запросы для адаптации</h3>
+    <p>Используйте медиа-запросы для разных размеров экранов:</p>
+
+    <pre><code>/* Стили для всех устройств */
+.container { width: 100%; }
+
+/* Стили для планшетов и меньше */
+@media (max-width: 768px) {
+    .container { padding: 10px; }
+}
+
+/* Стили для смартфонов */
+@media (max-width: 480px) {
+    .container { font-size: 14px; }
+}</code></pre>
+
+    <h3>Производительность на мобильных устройствах</h3>
+    <ul>
+        <li>Избегайте тяжелых анимаций</li>
+        <li>Используйте <code>transform</code> и <code>opacity</code> для анимаций</li>
+        <li>Минимизируйте перерисовку страницы</li>
+        <li>Оптимизируйте изображения</li>
+    </ul>
+
+    <h2>Задания</h2>
+
+    <div class="demo-box">
+        <h3>Демонстрация мобильных особенностей</h3>
+
+        <div class="touch-area" id="touch-area">
+            <p>👉 Нажмите на эту область несколько раз</p>
+            <div id="touch-counter" style="font-size: 24px; font-weight: bold; margin: 10px 0;">Касаний: 0</div>
+        </div>
+
+        <button class="mobile-btn" onclick="showDeviceInfo()">
+            📱 Информация об устройстве
+        </button>
+
+        <div class="form-group">
+            <label for="email-input">📧 Email:</label>
+            <input type="email" id="email-input" placeholder="Введите email">
+        </div>
+
+        <div class="form-group">
+            <label for="phone-input">📞 Телефон:</label>
+            <input type="tel" id="phone-input" placeholder="+7 (999) 123-45-67">
+        </div>
+
+        <div class="form-group">
+            <label for="age-input">🎂 Возраст:</label>
+            <input type="number" id="age-input" min="1" max="120" placeholder="Ваш возраст">
+        </div>
+    </div>
+
+    <ol>
+        <li>
+            <strong>Адаптируйте предыдущее приложение:</strong>
+            <ul>
+                <li>Убедитесь, что viewport meta tag присутствует</li>
+                <li>Увеличьте размер кнопок до минимум 48x48px</li>
+                <li>Добавьте медиа-запросы для маленьких экранов</li>
+                <li>Проверьте удобство нажатия пальцем</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте мобильную форму:</strong>
+            <ul>
+                <li>Создайте форму с полями: Имя, Email, Телефон, Возраст, Категория (select)</li>
+                <li>Используйте правильные типы input</li>
+                <li>Размер шрифта в полях ≥ 16px (чтобы не было zoom на iOS)</li>
+                <li>Сделайте большую и удобную кнопку отправки</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Создайте адаптивную карточную сетку:</strong>
+            <ul>
+                <li>2 колонки на больших экранах</li>
+                <li>1 колонка на мобильных устройствах (≤ 768px)</li>
+                <li>Минимальная высота карточек: 150px</li>
+                <li>Отступы между карточками</li>
+            </ul>
+        </li>
+    </ol>
+
+    <script>
+        // Счётчик касаний
+        let touchCount = 0;
+        const touchArea = document.getElementById('touch-area');
+        const touchCounter = document.getElementById('touch-counter');
+
+        touchArea.addEventListener('click', function() {
+            touchCount++;
+            touchCounter.textContent = `Касаний: ${touchCount}`;
+            touchArea.style.backgroundColor = touchCount % 2 === 0 ? '#e9ecef' : '#dee2e6';
+        });
+
+        // Информация об устройстве
+        function showDeviceInfo() {
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            alert(`📱 Информация об устройстве:\n\n` +
+                  `Ширина экрана: ${screenWidth}px\n` +
+                  `Высота экрана: ${screenHeight}px\n` +
+                  `Это мобильное устройство: ${isMobile ? 'Да' : 'Нет'}\n` +
+                  `Viewport width: ${window.innerWidth}px`);
+        }
+    </script>
+</body>
+</html>

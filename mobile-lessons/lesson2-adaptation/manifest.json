@@ -1,0 +1,17 @@
+{
+    "name": "Урок 2: Адаптация под мобильные устройства",
+    "short_name": "Mobile Урок",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#28a745",
+    "description": "Обучающее приложение по мобильной адаптации для студентов техникума",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

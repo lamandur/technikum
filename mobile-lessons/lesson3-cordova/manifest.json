@@ -1,0 +1,17 @@
+{
+    "name": "Урок 3: Первый проект на Apache Cordova",
+    "short_name": "Cordova Урок",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2196F3",
+    "description": "Обучающее приложение по Apache Cordova для студентов техникума",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
