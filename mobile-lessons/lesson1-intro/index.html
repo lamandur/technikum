@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 1 — Введение в PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .demo-box {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+            text-align: center;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 1: Введение в PWA (Progressive Web Apps)</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Познакомиться с концепцией PWA и создать своё первое мобильное приложение.</p>
+        <p><strong>Что делать:</strong> Изучите теорию ниже, выполните задания и протестируйте приложение на мобильном устройстве.</p>
+    </div>
+
+    <h2>Теория</h2>
+
+    <h3>Что такое PWA?</h3>
+    <p><strong>PWA (Progressive Web App)</strong> — это веб-приложение, которое можно установить на мобильное устройство как обычное приложение.</p>
+
+    <p><strong>Преимущества PWA:</strong></p>
+    <ul>
+        <li>Один код работает на Android, iOS и в браузере</li>
+        <li>Не требует установки Android Studio или Xcode</li>
+        <li>Использует знакомые технологии: HTML, CSS, JavaScript</li>
+        <li>Можно тестировать сразу в браузере</li>
+        <li>Быстрая установка без магазинов приложений</li>
+    </ul>
+
+    <h3>Как работает PWA?</h3>
+    <p>PWA — это обычный веб-сайт с дополнительными файлами:</p>
+    <ul>
+        <li><strong>Файл манифеста (<code>manifest.json</code>)</strong> — описывает приложение для системы</li>
+        <li><strong>Service Worker</strong> — позволяет работать офлайн (не обязателен для начала)</li>
+        <li><strong>Правильный viewport</strong> — обеспечивает корректное отображение на мобильных устройствах</li>
+    </ul>
+
+    <h3>Как установить PWA на телефон?</h3>
+    <ol>
+        <li>Откройте веб-страницу в мобильном браузере (Chrome, Safari)</li>
+        <li>Нажмите на меню (три точки или "Поделиться")</li>
+        <li>Выберите "Добавить на главный экран" или "Установить приложение"</li>
+        <li>Приложение появится на рабочем столе!</li>
+    </ol>
+
+    <h3>Файл манифеста (<code>manifest.json</code>)</h3>
+    <p>Это JSON-файл, который описывает ваше приложение:</p>
+
+    <pre><code>{
+    "name": "Моё приложение",
+    "short_name": "Приложение",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "icons": [{
+        "src": "icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    }]
+}</code></pre>
+
+    <p><strong>Обязательные поля:</strong></p>
+    <ul>
+        <li><code>name</code> — полное название приложения</li>
+        <li><code>short_name</code> — короткое название (для иконки)</li>
+        <li><code>start_url</code> — стартовая страница</li>
+        <li><code>display</code> — режим отображения (<code>standalone</code> = как приложение)</li>
+    </ul>
+
+    <h3>Viewport Meta Tag</h3>
+    <p>Этот тег <strong>обязателен</strong> для мобильных приложений:</p>
+    <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+
+    <h2>Задания</h2>
+
+    <div class="demo-box">
+        <h3>Демонстрация</h3>
+        <p>Попробуйте кнопки ниже — это уже работает как мобильное приложение!</p>
+        <button onclick="showMessage()">Показать сообщение</button>
+        <button onclick="showTime()">Текущее время</button>
+        <div id="result" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            Нажмите кнопку выше
+        </div>
+    </div>
+
+    <ol>
+        <li>
+            <strong>Создайте своё первое PWA:</strong>
+            <ul>
+                <li>Скопируйте этот HTML-файл и сохраните как <code>my-app.html</code></li>
+                <li>Создайте файл <code>manifest.json</code> рядом с ним (используйте пример выше)</li>
+                <li>Замените название приложения на своё</li>
+                <li>Откройте <code>my-app.html</code> в браузере</li>
+                <li>Проверьте, что кнопки работают</li>
+                <li>На мобильном устройстве: установите как приложение через меню браузера</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Добавьте новую функцию:</strong>
+            <ul>
+                <li>Добавьте кнопку, которая показывает случайную цитату из массива</li>
+                <li>Или генерирует случайное число от 1 до 100</li>
+                <li>Или показывает текущую дату</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Настройте внешний вид:</strong>
+            <ul>
+                <li>Измените название приложения в <code>manifest.json</code></li>
+                <li>Измените цвет фона (<code>background_color</code>)</li>
+                <li>Измените цвет темы (<code>theme_color</code>)</li>
+                <li>Проверьте, что цвета применяются после установки приложения</li>
+            </ul>
+        </li>
+    </ol>
+
+    <script>
+        function showMessage() {
+            document.getElementById('result').textContent =
+                'Привет из вашего первого PWA!';
+        }
+
+        function showTime() {
+            const now = new Date();
+            document.getElementById('result').textContent =
+                'Текущее время: ' + now.toLocaleTimeString('ru-RU');
+        }
+    </script>
+</body>
+</html>
