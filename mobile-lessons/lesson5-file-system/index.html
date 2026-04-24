@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Урок 5 — Работа с файловой системой</title>
-    <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -57,273 +56,238 @@
             border-left: 4px solid #4CAF50;
             border-radius: 0 5px 5px 0;
         }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #7b1fa2;
-        }
-        .demo-area {
-            border: 2px solid #ddd;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 5px;
-            background: #fff;
-            text-align: center;
-        }
-        .note-item {
-            background: #f8f9fa;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
     <h1>Урок 5: Работа с файловой системой</h1>
 
     <div class="info">
-        <p><strong>Цель урока:</strong> Научиться сохранять данные (текст, изображения) прямо на устройство пользователя с помощью файловой системы.</p>
+        <p><strong>Цель урока:</strong> Научиться сохранять данные (текст, изображения) на устройство пользователя с помощью файловой системы Cordova.</p>
         <p><strong>Требования:</strong> Готовый проект Cordova с установленными плагинами камеры и геолокации.</p>
+        <p><strong>Важно:</strong> Весь код работает <strong>только в собранном приложении</strong>. Тестирование в браузере невозможно.</p>
     </div>
 
     <h2>Зачем нужна файловая система?</h2>
-    <p><code>localStorage</code> — это хорошо, но он:</p>
-    <ul>
-        <li>Хранит только текст (до ~5 МБ)</li>
-        <li>Не может хранить изображения</li>
-        <li>Очищается при удалении данных браузера</li>
-    </ul>
-
-    <p><strong>Файловая система телефона</strong> позволяет:</p>
+    <p><code>localStorage</code> ограничен ~5 МБ и хранит только текст. Файловая система позволяет:</p>
     <ul>
         <li>Сохранять изображения, аудио, видео</li>
         <li>Хранить большие объёмы данных</li>
-        <li>Создавать настоящие файлы (как в проводнике)</li>
-        <li>Делать резервные копии</li>
+        <li>Создавать настоящие файлы в памяти устройства</li>
     </ul>
-
-    <div class="warning">
-        <strong>⚠️ Важно:</strong> Файловая система работает <strong>только в собранном приложении</strong> (APK). В браузере — не работает!
-    </div>
 
     <h2>Пошаговая инструкция</h2>
 
     <div class="step">
         <h3>Шаг 1: Установка плагина файловой системы</h3>
-        <p>Официальный плагин называется <code>cordova-plugin-file</code>.</p>
+        <pre><code>cordova plugin add cordova-plugin-file</code></pre>
 
-        <pre><code># Установка плагина файловой системы
-cordova plugin add cordova-plugin-file</code></pre>
-
-        <p>Этот плагин даёт доступ к папкам устройства:</p>
-        <ul>
-            <li><code>cordova.file.dataDirectory</code> — приватная папка вашего приложения</li>
-            <li><code>cordova.file.externalDataDirectory</code> — общая папка на SD-карте</li>
-            <li><code>cordova.file.documentsDirectory</code> — папка "Документы"</li>
-        </ul>
+        <p>Проверьте установку:</p>
+        <pre><code>cordova plugin list</code></pre>
     </div>
 
     <div class="step">
-        <h3>Шаг 2: Запись текстового файла</h3>
-        <p>Пример функции для сохранения текста в файл:</p>
+        <h3>Шаг 2: HTML-разметка</h3>
+        <p>Создайте файл <code>www/index.html</code>:</p>
 
-        <pre><code>function saveTextToFile(text, filename) {
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Файловая система&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 12px 24px; margin: 10px; font-size: 16px;
+                 background: #9c27b0; color: white; border: none;
+                 border-radius: 5px; cursor: pointer; }
+        textarea, input { width: 100%; padding: 10px; margin: 5px 0;
+                         border: 2px solid #ddd; border-radius: 5px; }
+        img { max-width: 100%; height: auto; border-radius: 5px;
+              margin-top: 15px; display: none; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;📁 Файловая система&lt;/h1&gt;
+
+    &lt;input type="text" id="filename" placeholder="Имя файла (без расширения)"&gt;
+    &lt;textarea id="content" placeholder="Текст для сохранения..." rows="4"&gt;&lt;/textarea&gt;
+    &lt;button onclick="saveTextFile()"&gt;💾 Сохранить текст&lt;/button&gt;
+    &lt;button onclick="loadTextFile()"&gt;📂 Загрузить текст&lt;/button&gt;
+
+    &lt;button onclick="takeAndSavePhoto()"&gt;📸 Сделать и сохранить фото&lt;/button&gt;
+    &lt;img id="savedPhoto"&gt;
+
+    &lt;script src="js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 3: JavaScript-код — работа с файлами</h3>
+        <p>Создайте файл <code>www/js/app.js</code>:</p>
+
+        <pre><code>// Сохранение текстового файла
+function saveTextFile() {
+    const filename = document.getElementById('filename').value.trim();
+    const content = document.getElementById('content').value.trim();
+
+    if (!filename) {
+        alert('Введите имя файла');
+        return;
+    }
+
+    const fullFilename = filename + '.txt';
+
     window.resolveLocalFileSystemURL(
         cordova.file.dataDirectory,
-        function(directory) {
-            directory.getFile(filename, { create: true }, function(fileEntry) {
+        function(dirEntry) {
+            dirEntry.getFile(fullFilename, { create: true }, function(fileEntry) {
                 fileEntry.createWriter(function(fileWriter) {
-                    fileWriter.write(new Blob([text], { type: 'text/plain' }));
-                    alert('Файл сохранён: ' + filename);
+                    fileWriter.onwriteend = function() {
+                        alert('Файл сохранён: ' + fullFilename);
+                    };
+                    fileWriter.onerror = function(e) {
+                        alert('Ошибка записи: ' + e.toString());
+                    };
+                    fileWriter.write(new Blob([content], { type: 'text/plain' }));
                 });
             });
         },
         function(error) {
-            alert('Ошибка записи: ' + error.code);
+            alert('Ошибка доступа к файловой системе');
         }
     );
-}</code></pre>
+}
 
-        <p><strong>Как это работает:</strong></p>
-        <ol>
-            <li>Находим папку приложения (<code>dataDirectory</code>)</li>
-            <li>Создаём или открываем файл с указанным именем</li>
-            <li>Записываем текст как Blob (двоичные данные)</li>
-        </ol>
-    </div>
+// Загрузка текстового файла
+function loadTextFile() {
+    const filename = document.getElementById('filename').value.trim();
+    if (!filename) {
+        alert('Введите имя файла');
+        return;
+    }
 
-    <div class="step">
-        <h3>Шаг 3: Чтение текстового файла</h3>
-        <p>Чтение файла обратно в приложение:</p>
+    const fullFilename = filename + '.txt';
 
-        <pre><code>function readTextFromFile(filename, callback) {
     window.resolveLocalFileSystemURL(
         cordova.file.dataDirectory,
-        function(directory) {
-            directory.getFile(filename, {}, function(fileEntry) {
+        function(dirEntry) {
+            dirEntry.getFile(fullFilename, {}, function(fileEntry) {
                 fileEntry.file(function(file) {
-                    var reader = new FileReader();
+                    const reader = new FileReader();
                     reader.onloadend = function() {
-                        callback(this.result);
+                        document.getElementById('content').value = this.result;
                     };
                     reader.readAsText(file);
                 });
             });
         },
         function(error) {
-            alert('Файл не найден: ' + filename);
+            alert('Файл не найден: ' + fullFilename);
         }
     );
-}</code></pre>
-    </div>
+}
 
-    <div class="step">
-        <h3>Шаг 4: Сохранение изображения</h3>
-        <p>Когда вы делаете фото через камеру, вы получаете base64-строку. Её можно сохранить как файл:</p>
-
-        <pre><code>function saveImageToFile(base64Data, filename) {
+// Сохранение изображения
+function saveImageToFile(base64Data, filename) {
     window.resolveLocalFileSystemURL(
         cordova.file.dataDirectory,
-        function(directory) {
-            directory.getFile(filename, { create: true }, function(fileEntry) {
+        function(dirEntry) {
+            dirEntry.getFile(filename, { create: true }, function(fileEntry) {
                 fileEntry.createWriter(function(fileWriter) {
-                    // Убираем префикс data:image/jpeg;base64,
-                    var data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
-                    var binary = atob(data);
-                    var array = [];
-                    for (var i = 0; i < binary.length; i++) {
+                    fileWriter.onwriteend = function() {
+                        alert('Изображение сохранено: ' + filename);
+                        // Показываем сохранённое фото
+                        document.getElementById('savedPhoto').src =
+                            "image/jpeg;base64," + base64Data;
+                        document.getElementById('savedPhoto').style.display = "block";
+                    };
+                    fileWriter.onerror = function(e) {
+                        alert('Ошибка сохранения изображения');
+                    };
+
+                    // Обработка base64
+                    const data = base64Data.replace(/^image\/jpeg;base64,/, "");
+                    const binary = atob(data);
+                    const array = [];
+                    for (let i = 0; i < binary.length; i++) {
                         array.push(binary.charCodeAt(i));
                     }
-                    var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+                    const blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
                     fileWriter.write(blob);
-                    alert('Изображение сохранено: ' + filename);
                 });
             });
         },
         function(error) {
-            alert('Ошибка сохранения изображения');
+            alert('Ошибка доступа к файловой системе');
         }
     );
-}</code></pre>
-    </div>
+}
 
-    <div class="step">
-        <h3>Шаг 5: Интеграция с камерой</h3>
-        <p>Объедините камеру и файловую систему:</p>
-
-        <pre><code>function takeAndSavePhoto() {
+// Съёмка и сохранение фото
+function takeAndSavePhoto() {
     navigator.camera.getPicture(
         function(imageData) {
-            // Сохраняем изображение
-            saveImageToFile(imageData, 'photo_' + Date.now() + '.jpg');
-
-            // Также сохраняем описание
-            saveTextToFile('Фото сделано: ' + new Date(),
-                          'photo_' + Date.now() + '.txt');
+            const filename = 'photo_' + Date.now() + '.jpg';
+            saveImageToFile(imageData, filename);
         },
         function(message) {
             alert('Ошибка камеры: ' + message);
         },
         {
-            quality: 50,
+            quality: 60,
             destinationType: Camera.DestinationType.DATA_URL
         }
     );
 }</code></pre>
     </div>
 
-    <h2>Структура папок на устройстве</h2>
+    <div class="step">
+        <h3>Шаг 4: Сборка и тестирование</h3>
+        <pre><code># Подключите телефон с отладкой по USB
+cordova run android</code></pre>
 
-    <pre><code>Ваше устройство/
-└── Android/
-    └── data/
-        └── com.example.myapp/   ← Папка вашего приложения
-            └── files/           ← Сюда сохраняются файлы
-                ├── note1.txt
-                ├── photo1.jpg
-                └── photo2.jpg</code></pre>
-
-    <div class="success">
-        <strong>✅ Важно:</strong> Файлы сохраняются в приватную папку приложения. Пользователь не видит их напрямую, но они остаются даже после перезапуска!
+        <p>Или соберите APK:</p>
+        <pre><code>cordova build android
+# Установите APK из: platforms/android/app/build/outputs/apk/debug/app-debug.apk</code></pre>
     </div>
 
-    <h2>Задания для практики</h2>
+    <h2>Структура проекта</h2>
+
+    <pre><code>my-files/
+├── config.xml
+├── www/
+│   ├── index.html
+│   └── js/
+│       └── app.js          ← Весь код здесь
+├── plugins/
+│   └── cordova-plugin-file/
+└── platforms/</code></pre>
+
+    <div class="success">
+        <strong>✅ Важно:</strong> Все файлы сохраняются в приватную папку приложения (<code>cordova.file.dataDirectory</code>). Они недоступны пользователю напрямую, но сохраняются между запусками.
+    </div>
+
+    <h2>Задания</h2>
 
     <ol>
-        <li>
-            <strong>Установите плагин файловой системы:</strong>
-            <ul>
-                <li>Выполните <code>cordova plugin add cordova-plugin-file</code></li>
-                <li>Проверьте командой <code>cordova plugin list</code></li>
-            </ul>
-        </li>
-        <li>
-            <strong>Создайте "Текстовый блокнот":</strong>
-            <ul>
-                <li>Добавьте поле ввода текста</li>
-                <li>Кнопку "Сохранить заметку"</li>
-                <li>При нажатии сохраняйте текст в файл с именем <code>note_дата.txt</code></li>
-            </ul>
-        </li>
-        <li>
-            <strong>Добавьте просмотр заметок:</strong>
-            <ul>
-                <li>Кнопка "Показать все заметки"</li>
-                <li>Читайте все файлы из папки и показывайте их содержимое</li>
-                <li>Используйте простой список</li>
-            </ul>
-        </li>
-        <li>
-            <strong>Фото-блокнот (итоговое задание):</strong>
-            <ul>
-                <li>Сделайте фото через камеру</li>
-                <li>Сохраните фото как файл</li>
-                <li>Сохраните текстовое описание к фото</li>
-                <li>Покажите галерею сохранённых фото</li>
-            </ul>
-        </li>
+        <li>Установите плагин <code>cordova-plugin-file</code>.</li>
+        <li>Реализуйте сохранение и загрузку текстовых файлов.</li>
+        <li>Добавьте функцию съёмки и сохранения фото.</li>
+        <li>Протестируйте всё на реальном устройстве через <code>cordova run android</code>.</li>
     </ol>
 
     <div class="warning">
-        <h3>Частые проблемы и решения</h3>
+        <h3>Решение типичных проблем</h3>
 
-        <p><strong>Проблема:</strong> Ошибка "FileError.NOT_FOUND_ERR"</p>
-        <p><strong>Решение:</strong> Убедитесь, что папка существует. Используйте <code>{ create: true }</code> при создании файла.</p>
+        <p><strong>"FileError.NOT_FOUND_ERR"</strong> → Убедитесь, что используете <code>{ create: true }</code> при создании файла.</p>
 
-        <p><strong>Проблема:</strong> Изображение не сохраняется</p>
-        <p><strong>Решение:</strong> Проверьте, что вы правильно обрабатываете base64-строку (убираете префикс).</p>
+        <p><strong>Изображение не сохраняется</strong> → Проверьте обработку base64-строки (уберите префикс <code>image/jpeg;base64,</code>).</p>
 
-        <p><strong>Проблема:</strong> Нет доступа к файлам</p>
-        <p><strong>Решение:</strong> Убедитесь, что используете <code>cordova.file.dataDirectory</code>, а не другие пути.</p>
+        <p><strong>Нет доступа к файлам</strong> → Используйте только <code>cordova.file.dataDirectory</code>, другие пути могут не работать.</p>
     </div>
 
     <h2>Что дальше?</h2>
-    <p>После этого урока вы сможете:</p>
-    <ul>
-        <li>Сохранять любые данные на устройство</li>
-        <li>Работать с изображениями и текстом</li>
-        <li>Создавать приложения, которые работают без интернета</li>
-        <li>Подготовиться к итоговому проекту в Уроке 6</li>
-    </ul>
-
-    <div class="demo-area">
-        <h3>Демонстрация (только концепция)</h3>
-        <p>В настоящем Cordova-приложении здесь будет:<br>
-        • Поле ввода<br>
-        • Кнопка "Сохранить"<br>
-        • Список сохранённых файлов</p>
-        <button onclick="alert('В Cordova-приложении здесь будет работа с файловой системой!')">
-            Сохранить заметку
-        </button>
-    </div>
+    <p>Теперь вы можете создавать приложения, которые полностью работают офлайн и сохраняют любые данные на устройство пользователя.</p>
 </body>
 </html>
