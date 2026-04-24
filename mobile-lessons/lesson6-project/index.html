@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6 — Итоговый проект: Мои заметки</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .step {
+            background: #fff8e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+            border-radius: 0 5px 5px 0;
+        }
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 0 5px 5px 0;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 8px;
+            font-size: 16px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #f57c00;
+        }
+        .demo-area {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .note-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ff9800;
+        }
+        .note-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .note-content {
+            margin-bottom: 5px;
+        }
+        .note-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        img.note-photo {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Урок 6: Итоговый проект — Мои заметки</h1>
+
+    <div class="info">
+        <p><strong>Цель урока:</strong> Создать полноценное мобильное приложение, объединяющее все знания из предыдущих уроков.</p>
+        <p><strong>Функционал приложения:</strong> Добавление текстовых заметок, прикрепление фото, сохранение на устройство, просмотр всех заметок.</p>
+    </div>
+
+    <h2>Полный список необходимых плагинов</h2>
+
+    <pre><code># Установите все плагины для проекта
+cordova plugin add cordova-plugin-camera
+cordova plugin add cordova-plugin-geolocation
+cordova plugin add cordova-plugin-file</code></pre>
+
+    <div class="warning">
+        <strong>⚠️ Проверьте установку:</strong> Выполните <code>cordova plugin list</code> — должны быть все три плагина!
+    </div>
+
+    <h2>Структура проекта</h2>
+
+    <pre><code>my-notes/
+├── config.xml
+├── www/
+│   ├── index.html          # Основная страница
+│   ├── css/
+│   │   └── style.css       # Стили (опционально)
+│   └── js/
+│       └── app.js          # Весь JavaScript код
+└── platforms/
+    └── android/</code></pre>
+
+    <h2>Полный код приложения</h2>
+
+    <div class="step">
+        <h3>Файл 1: www/index.html</h3>
+        <p>Это основная страница вашего приложения:</p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;title&gt;Мои заметки&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { padding: 12px 24px; margin: 8px; font-size: 16px;
+                 background: #ff9800; color: white; border: none;
+                 border-radius: 5px; cursor: pointer; }
+        textarea, input { width: 100%; padding: 10px; margin: 5px 0;
+                          border: 2px solid #ddd; border-radius: 5px; }
+        .note-item { background: #f8f9fa; padding: 15px; margin: 10px 0;
+                     border-radius: 5px; }
+        img { max-width: 100%; height: auto; border-radius: 5px; margin-top: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;📝 Мои заметки&lt;/h1&gt;
+
+        &lt;div&gt;
+            &lt;input type="text" id="noteTitle" placeholder="Заголовок заметки"&gt;
+            &lt;textarea id="noteContent" placeholder="Содержание заметки..." rows="4"&gt;&lt;/textarea&gt;
+            &lt;button onclick="takePhoto()"&gt;📸 Сделать фото&lt;/button&gt;
+            &lt;button onclick="saveNote()"&gt;💾 Сохранить заметку&lt;/button&gt;
+            &lt;img id="photoPreview" style="display:none;"&gt;
+        &lt;/div&gt;
+
+        &lt;div&gt;
+            &lt;h2&gt;Сохранённые заметки:&lt;/h2&gt;
+            &lt;button onclick="loadAllNotes()"&gt;🔄 Загрузить все заметки&lt;/button&gt;
+            &lt;div id="notesList"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script src="js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Файл 2: www/js/app.js — Полный код</h3>
+        <p>Это сердце вашего приложения. Скопируйте весь код:</p>
+
+        <pre><code>// Глобальная переменная для хранения фото
+let currentPhoto = null;
+
+// Функция для запуска камеры
+function takePhoto() {
+    if (!navigator.camera) {
+        alert('Камера не доступна. Убедитесь, что работаете в Cordova-приложении!');
+        return;
+    }
+
+    navigator.camera.getPicture(
+        function(imageData) {
+            // Успешное получение фото
+            currentPhoto = imageData;
+            const photoPreview = document.getElementById('photoPreview');
+            photoPreview.src = "image/jpeg;base64," + imageData;
+            photoPreview.style.display = "block";
+        },
+        function(message) {
+            // Ошибка камеры
+            alert('Ошибка камеры: ' + message);
+        },
+        {
+            quality: 60,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            encodingType: Camera.EncodingType.JPEG
+        }
+    );
+}
+
+// Функция для сохранения заметки
+function saveNote() {
+    const title = document.getElementById('noteTitle').value.trim();
+    const content = document.getElementById('noteContent').value.trim();
+
+    if (!title) {
+        alert('Введите заголовок заметки!');
+        return;
+    }
+
+    // Генерируем уникальное имя файла
+    const timestamp = Date.now();
+    const noteFilename = `note_${timestamp}.txt`;
+    const photoFilename = `photo_${timestamp}.jpg`;
+
+    // Создаем содержимое заметки
+    let noteContent = `Заголовок: ${title}\n`;
+    noteContent += `Дата: ${new Date().toLocaleString()}\n`;
+    if (content) {
+        noteContent += `\n${content}\n`;
+    }
+
+    // Сохраняем текстовую заметку
+    saveTextToFile(noteContent, noteFilename, function() {
+        if (currentPhoto) {
+            // Сохраняем фото, если оно есть
+            saveImageToFile(currentPhoto, photoFilename, function() {
+                alert('Заметка с фото сохранена!');
+                clearForm();
+            });
+        } else {
+            alert('Текстовая заметка сохранена!');
+            clearForm();
+        }
+    });
+}
+
+// Функция для очистки формы
+function clearForm() {
+    document.getElementById('noteTitle').value = '';
+    document.getElementById('noteContent').value = '';
+    document.getElementById('photoPreview').style.display = 'none';
+    currentPhoto = null;
+}
+
+// Функция для сохранения текста в файл
+function saveTextToFile(text, filename, callback) {
+    window.resolveLocalFileSystemURL(
+        cordova.file.dataDirectory,
+        function(directory) {
+            directory.getFile(filename, { create: true }, function(fileEntry) {
+                fileEntry.createWriter(function(fileWriter) {
+                    fileWriter.onwriteend = callback;
+                    fileWriter.onerror = function(e) {
+                        alert('Ошибка записи файла: ' + e.toString());
+                    };
+                    fileWriter.write(new Blob([text], { type: 'text/plain' }));
+                });
+            });
+        },
+        function(error) {
+            alert('Ошибка доступа к файловой системе: ' + error.code);
+        }
+    );
+}
+
+// Функция для сохранения изображения в файл
+function saveImageToFile(base64Data, filename, callback) {
+    window.resolveLocalFileSystemURL(
+        cordova.file.dataDirectory,
+        function(directory) {
+            directory.getFile(filename, { create: true }, function(fileEntry) {
+                fileEntry.createWriter(function(fileWriter) {
+                    fileWriter.onwriteend = callback;
+                    fileWriter.onerror = function(e) {
+                        alert('Ошибка сохранения изображения: ' + e.toString());
+                    };
+
+                    // Обрабатываем base64 данные
+                    const data = base64Data.replace(/^image\/jpeg;base64,/, "");
+                    const binary = atob(data);
+                    const array = [];
+                    for (let i = 0; i < binary.length; i++) {
+                        array.push(binary.charCodeAt(i));
+                    }
+                    const blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+                    fileWriter.write(blob);
+                });
+            });
+        },
+        function(error) {
+            alert('Ошибка доступа к файловой системе: ' + error.code);
+        }
+    );
+}
+
+// Функция для загрузки всех заметок
+function loadAllNotes() {
+    const notesList = document.getElementById('notesList');
+    notesList.innerHTML = '&lt;p&gt;Загрузка...&lt;/p&gt;';
+
+    window.resolveLocalFileSystemURL(
+        cordova.file.dataDirectory,
+        function(directory) {
+            const reader = directory.createReader();
+            reader.readEntries(function(entries) {
+                // Фильтруем только текстовые файлы заметок
+                const noteFiles = entries.filter(entry =>
+                    entry.name.startsWith('note_') && entry.name.endsWith('.txt')
+                );
+
+                if (noteFiles.length === 0) {
+                    notesList.innerHTML = '&lt;p&gt;Нет сохранённых заметок&lt;/p&gt;';
+                    return;
+                }
+
+                // Сортируем по дате (новые сверху)
+                noteFiles.sort((a, b) => {
+                    const timeA = parseInt(a.name.replace('note_', '').replace('.txt', ''));
+                    const timeB = parseInt(b.name.replace('note_', '').replace('.txt', ''));
+                    return timeB - timeA;
+                });
+
+                // Читаем все заметки
+                let notesHtml = '';
+                let processed = 0;
+
+                noteFiles.forEach(fileEntry => {
+                    fileEntry.file(function(file) {
+                        const reader = new FileReader();
+                        reader.onloadend = function() {
+                            const content = this.result;
+                            const lines = content.split('\n');
+                            const title = lines[0].replace('Заголовок: ', '');
+                            const date = lines[1].replace('Дата: ', '');
+
+                            // Ищем соответствующее фото
+                            const timestamp = fileEntry.name.replace('note_', '').replace('.txt', '');
+                            const photoPath = cordova.file.dataDirectory + 'photo_' + timestamp + '.jpg';
+
+                            notesHtml += `
+                                &lt;div class="note-item"&gt;
+                                    &lt;div class="note-title"&gt;${title}&lt;/div&gt;
+                                    &lt;div class="note-meta"&gt;${date}&lt;/div&gt;
+                                    &lt;div class="note-content"&gt;${lines.slice(3).join('\n')}&lt;/div&gt;
+                            `;
+
+                            // Проверяем существование фото (упрощённо)
+                            notesHtml += `&lt;/div&gt;`;
+
+                            processed++;
+                            if (processed === noteFiles.length) {
+                                notesList.innerHTML = notesHtml;
+                            }
+                        };
+                        reader.readAsText(file);
+                    });
+                });
+            });
+        },
+        function(error) {
+            notesList.innerHTML = '&lt;p&gt;Ошибка загрузки заметок&lt;/p&gt;';
+        }
+    );
+}
+
+// Инициализация приложения
+document.addEventListener('deviceready', function() {
+    console.log('Cordova готова!');
+    // Можно добавить авто-загрузку заметок
+    // loadAllNotes();
+}, false);</code></pre>
+    </div>
+
+    <h2>Пошаговая сборка проекта</h2>
+
+    <div class="step">
+        <h3>Шаг 1: Создание проекта</h3>
+        <pre><code>cordova create my-notes com.example.mynotes "Мои заметки"
+cd my-notes</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 2: Добавление платформы и плагинов</h3>
+        <pre><code>cordova platform add android
+cordova plugin add cordova-plugin-camera
+cordova plugin add cordova-plugin-geolocation
+cordova plugin add cordova-plugin-file</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 3: Создание структуры папок</h3>
+        <pre><code>mkdir -p www/js</code></pre>
+        <p>Создайте файлы:</p>
+        <ul>
+            <li><code>www/index.html</code> — скопируйте HTML-код выше</li>
+            <li><code>www/js/app.js</code> — скопируйте JavaScript-код выше</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>Шаг 4: Тестирование</h3>
+        <pre><code># Подключите телефон и включите отладку по USB
+cordova run android</code></pre>
+        <p>Или соберите APK:</p>
+        <pre><code>cordova build android
+# APK будет в: platforms/android/app/build/outputs/apk/debug/app-debug.apk</code></pre>
+    </div>
+
+    <h2>Задания для практики</h2>
+
+    <ol>
+        <li>
+            <strong>Создайте проект по инструкции:</strong>
+            <ul>
+                <li>Следуйте шагам 1-4 выше</li>
+                <li>Убедитесь, что все файлы созданы правильно</li>
+                <li>Протестируйте на устройстве</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Улучшите приложение:</strong>
+            <ul>
+                <li>Добавьте автоматическую загрузку заметок при старте</li>
+                <li>Добавьте кнопку удаления заметки</li>
+                <li>Добавьте отображение фото в списке заметок</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Дополнительные функции:</strong>
+            <ul>
+                <li>Добавьте геолокацию — сохраняйте координаты с каждой заметкой</li>
+                <li>Добавьте поиск по заметкам</li>
+                <li>Добавьте редактирование существующих заметок</li>
+            </ul>
+        </li>
+    </ol>
+
+    <div class="success">
+        <h3>✅ Итоговый результат</h3>
+        <p>У вас будет полноценное мобильное приложение, которое:</p>
+        <ul>
+            <li>Работает без интернета</li>
+            <li>Сохраняет данные на устройство</li>
+            <li>Использует камеру телефона</li>
+            <li>Имеет профессиональный интерфейс</li>
+            <li>Может быть установлено как APK-файл</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h3>Частые проблемы и решения</h3>
+
+        <p><strong>Проблема:</strong> Приложение не запускается на устройстве</p>
+        <p><strong>Решение:</strong> Убедитесь, что включена "Отладка по USB" в настройках разработчика.</p>
+
+        <p><strong>Проблема:</strong> Камера не работает</p>
+        <p><strong>Решение:</strong> Проверьте разрешения в настройках приложения на телефоне.</p>
+
+        <p><strong>Проблема:</strong> Файлы не сохраняются</p>
+        <p><strong>Решение:</strong> Убедитесь, что используете <code>cordova.file.dataDirectory</code> и обрабатываете ошибки.</p>
+    </div>
+
+    <h2>Что дальше?</h2>
+    <p>После этого проекта вы можете:</p>
+    <ul>
+        <li>Опубликовать приложение в Google Play</li>
+        <li>Добавить больше функций (уведомления, синхронизация)</li>
+        <li>Создавать другие типы приложений (погода, задачи, справочники)</li>
+        <li>Изучать более продвинутые фреймворки (Ionic, React Native)</li>
+    </ul>
+</body>
+</html>
